@@ -1,28 +1,40 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { RiDeleteBin5Fill } from "react-icons/ri";
 // import button from "./common/button";
 const TodoItems = () => {
   const [title, setTitle] = useState("");
   const [todo, setTodo] = useState([]);
+  const [isinputValid, setInputValid] = useState(false);
 
-  const addItem = useRef(null);
+  function formValidation() {
+    if (title.trim() === "") {
+      console.log(title.trim());
+      setInputValid(false);
+      return false;
+    }
 
+    setInputValid(true);
+    return true;
+  }
   const deleteTodo = (index) => {
     let updatedtask = [...todo];
     updatedtask.splice(index, 1);
     setTodo(updatedtask);
     saveTasks([...updatedtask]);
   };
+
   function handleSubmit(event) {
+    event.preventDefault();
+    if (!formValidation()) {
+      return;
+    }
     setTodo([...todo, { title }]);
     saveTasks([...todo, { title }]);
-    event.preventDefault();
     setTitle("");
   }
 
   function loadTasks() {
     let loadedTasks = localStorage.getItem("todo");
-
     let tasks = JSON.parse(loadedTasks);
 
     if (tasks) {
@@ -57,6 +69,11 @@ const TodoItems = () => {
               <div className="font-sans text-4xl font-bold text-white">
                 My Tasks
               </div>
+              {isinputValid == true || (
+                <div className="text-red-600">
+                  Please enter a valid task name
+                </div>
+              )}
               {todo.map((item, index) => (
                 <div className=" max-h-screen  text-white" key={index}>
                   <div className="flex h-fit my-2 bg-slates w-full border-2 rounded-md justify-between py-2">
@@ -81,7 +98,7 @@ const TodoItems = () => {
           )}
         </div>
         <div className=" max-h-fit flex justify-center lg:w-screen ">
-          <form className="w-1/3 " onSubmit={handleSubmit}>
+          <form className="w-1/3 " name="todoform" onSubmit={handleSubmit}>
             <div className="text-white w-[30%]">
               {" "}
               <div className="flex flex-col w-full">
@@ -90,7 +107,7 @@ const TodoItems = () => {
                   className=" w-full h-8 rounded-md p-2 my-2 text-black"
                   type="text"
                   required
-                  ref={addItem}
+                  name="taskname"
                   placeholder="Task..."
                   onChange={(e) => setTitle(e.target.value)}
                   value={title}
