@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import { RiDeleteBin5Fill } from "react-icons/ri";
-// import button from "./common/button";
+import { RiDeleteBin5Fill, RiEditBoxLine } from "react-icons/ri";
+import Button from "./common/button";
 const TodoItems = () => {
   const [title, setTitle] = useState("");
   const [todo, setTodo] = useState([]);
@@ -33,6 +33,7 @@ const TodoItems = () => {
     setTitle("");
   }
 
+
   function loadTasks() {
     let loadedTasks = localStorage.getItem("todo");
     let tasks = JSON.parse(loadedTasks);
@@ -52,13 +53,15 @@ const TodoItems = () => {
 
   return (
     <>
-      <div className="flexjustify-center flex-col items-center w-screen">
+      <div className="flexjustify-center mt-9 flex-col items-center w-screen">
         <div className=" max-h-fit flex justify-center lg:w-screen">
           {todo.length === 0 ? (
             <>
-              <div className="  flex  md:flex-col justify-evenly  md:w-full md:z-10 lg:w-1/3 p-2 text-white rounded-md lg:h-3/6 sm:h-1/2 border-2">
-                <div>My Task</div>
-                <div className="font-sans text-3xl py-2 ">
+              <div className=" flex md:flex-col justify-evenly md:w-full md:z-10 lg:w-1/3 text-white  lg:h-3/6 sm:h-1/2 ">
+                <div className="font-sans font-extrabold text-4xl my-2">
+                  My Tasks
+                </div>
+                <div className=" text-md text-slate-500 opacity-40 py-2 ">
                   {" "}
                   You have No Task
                 </div>
@@ -75,20 +78,25 @@ const TodoItems = () => {
                 </div>
               )}
               {todo.map((item, index) => (
-                <div className=" max-h-screen  text-white" key={index}>
-                  <div className="flex h-fit my-2 bg-slates w-full border-2 rounded-md justify-between py-2">
+                <div className=" max-h-screen text-white" key={index}>
+                  <div className="flex h-fit my-4 bg-slates w-full  border-2 rounded-md justify-between py-4 px-1">
                     {" "}
                     <div className="flex mx-2 gap-4 flex-col">
-                      <div>{item.title}</div>
-                      <div className=" text-gray-500">{item.description}</div>
+                      <div className="">{item.title}</div>
                     </div>
-                    <div>
+                    <div className="flex flex-col ">
                       <RiDeleteBin5Fill
-                        className="mx-2"
+                        className="m-1"
                         color="red"
                         opacity={0.6}
                         size={22}
                         onClick={() => deleteTodo(index)}
+                      />
+                      <RiEditBoxLine
+                        className="m-1"
+                        color="white"
+                        opacity={0.6}
+                        size={22}
                       />
                     </div>
                   </div>
@@ -114,9 +122,7 @@ const TodoItems = () => {
                 />
               </div>
               <div className="flex ">
-                <button className="bg-blue-500 p-2 rounded-md" type="submit">
-                  Add a Task
-                </button>
+                <Button color="#1864AB"> Add a Task</Button>
               </div>
             </div>
           </form>
