@@ -9,3 +9,7 @@ body {
   font-family: "Poppins", "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
     "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
 }
+
+#scrollbar {
+  overflow-y: auto;
+}
