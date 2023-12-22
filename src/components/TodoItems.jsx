@@ -1,5 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { RiDeleteBin5Fill, RiEditBoxLine } from "react-icons/ri";
+import ToogleBar from "./common/ToogleBar";
+import {} from "react-icons/ri";
 import Button from "./common/button";
 import InputButton from "./common/InputButton";
 const TodoItems = () => {
@@ -7,6 +9,8 @@ const TodoItems = () => {
   const [todo, setTodo] = useState([]);
   const [isinputValid, setInputValid] = useState(false);
   const [editIndex, setEditIndex] = useState(null);
+  const editRef = useRef(null);
+
   function formValidation() {
     if (title.trim() === "") {
       console.log(title.trim());
@@ -78,6 +82,17 @@ const TodoItems = () => {
 
   useEffect(() => {
     loadTasks();
+    const handleClickOutside = (event) => {
+      if (editRef.current && !editRef.current.contains(event.target)) {
+        cancelEdit();
+      }
+    };
+
+    document.addEventListener("click", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("click", handleClickOutside);
+    };
   }, []);
 
   return (
@@ -89,7 +104,7 @@ const TodoItems = () => {
           {todo.length === 0 ? (
             <>
               <div className=" flex flex-col md:flex-col justify-evenly md:w-full md:z-10 lg:w-1/3 text-white lg:ml-10  lg:h-3/6 sm:h-1/2 ">
-                <div className="font-sans font-extrabold text-4xl md:text-base  my-2">
+                <div className="font-sans lg:font-extrabold  lg:text-3xl text-sm font-bold my-2">
                   My Tasks
                 </div>
                 <div className=" text-md text-slate-500 opacity-40 py-2 ">
@@ -110,7 +125,9 @@ const TodoItems = () => {
               )}
               {todo.map((item, index) => (
                 <div className=" max-h-screen text-white" key={index}>
-                  <div className="flex max-h-fit max-w-fit my-2 bg-slates w-full  border-2 border-gray-500 rounded-md justify-between py-1 px-1">
+                  <div
+                    ref={editIndex === index ? editRef : null}
+                    className="flex max-h-fit max-w-fit my-2 bg-slates w-full  border-2 border-gray-500 rounded-md justify-between py-1 px-1">
                     {editIndex === index ? (
                       <>
                         <div className="flex flex-col">
@@ -167,13 +184,14 @@ const TodoItems = () => {
               ))}
             </div>
           )}
+          <ToogleBar />
         </div>
         <div className=" max-h-fit flex  w-10/12 justify-center ">
           <form
-            className="w-full max-w-fit lg:w-10/12"
+            className="w-full max-w-fit lg:w-11/12"
             name="todoform"
             onSubmit={handleSubmit}>
-            <div className="text-white ">
+            <div className="text-white mr-8">
               {" "}
               <div className="flex flex-col w-full">
                 <div>Task</div>
