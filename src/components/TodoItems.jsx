@@ -98,7 +98,7 @@ const TodoItems = () => {
       <div
         id="scrollbar"
         className="flex justify-center  lg:w-1/2 w-10/12  mt-9 flex-col items-center mx-auto border-2 rounded-md p-2 bg-gray-700">
-        <div className=" max-h-96 overflow-y-auto w-10/12 flex justify-center lg:w-10/12  ">
+        <div className=" max-h-96 overflow-y-auto w-11/12 flex justify-center lg:w-10/12  ">
           {todo.length === 0 ? (
             <>
               <div className=" flex flex-col md:flex-col justify-evenly md:w-full md:z-10 lg:w-1/3 text-white lg:ml-10  lg:h-3/6 sm:h-1/2 ">
@@ -143,11 +143,11 @@ const TodoItems = () => {
                         </div>
                       </>
                     ) : (
-                      <div className="flex mx-2 lg:mx-1 lg:gap-2 gap-0 flex-col">
-                        <div className="text-sm w-2/3">{item.title}</div>
+                      <div className="flex lg:mx-2 lg:gap-2 gap-0 flex-col">
+                        <div className="md:text-sm text-xs">{item.title}</div>
                       </div>
                     )}
-                    <div className="flex">
+                    <div className="flex flex-col md:flex-row">
                       <RiDeleteBin5Fill
                         className="m-1"
                         color="red"
