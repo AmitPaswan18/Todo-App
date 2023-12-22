@@ -16,9 +16,11 @@ const TodoItems = () => {
       setInputValid(false);
       return false;
     }
+
     setInputValid(true);
     return true;
   }
+
   const deleteTodo = (index) => {
     let updatedtask = [...todo];
     updatedtask.splice(index, 1);
@@ -80,6 +82,7 @@ const TodoItems = () => {
 
   useEffect(() => {
     loadTasks();
+    setInputValid(true);
     const handleClickOutside = (event) => {
       if (editRef.current && !editRef.current.contains(event.target)) {
         cancelEdit();
@@ -116,7 +119,8 @@ const TodoItems = () => {
               <div className="font-sans text-4xl font-bold text-white">
                 My Tasks
               </div>
-              {isinputValid == true || (
+
+              {isinputValid === false && (
                 <div className="text-red-600">
                   Please enter a valid task name
                 </div>
