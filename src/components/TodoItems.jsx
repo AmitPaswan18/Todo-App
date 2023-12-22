@@ -13,11 +13,9 @@ const TodoItems = () => {
 
   function formValidation() {
     if (title.trim() === "") {
-      console.log(title.trim());
       setInputValid(false);
       return false;
     }
-
     setInputValid(true);
     return true;
   }
@@ -136,22 +134,12 @@ const TodoItems = () => {
                             placeholder="Task..."
                             onChange={(e) => setTitle(e.target.value)}
                             value={title}
+                            onKeyDown={(e) => {
+                              if (e.key === "Enter") {
+                                handleEditSubmit(e);
+                              }
+                            }}
                           />
-                          <div className="flex w-full justify-between mx-2 mb-2">
-                            <Button
-                              size="small"
-                              border="1px solid white"
-                              onClick={() => cancelEdit(todo.id)}>
-                              Cancel
-                            </Button>
-                            <Button
-                              color="green"
-                              size="small"
-                              className="text-sm p-2"
-                              onClick={() => handleEditSubmit(todo.id, title)}>
-                              Submit
-                            </Button>
-                          </div>
                         </div>
                       </>
                     ) : (
@@ -165,6 +153,7 @@ const TodoItems = () => {
                         color="red"
                         opacity={0.6}
                         size={18}
+                        style={{ cursor: "pointer" }}
                         onClick={() => deleteTodo(index)}
                       />
                       <RiEditBoxLine
@@ -172,6 +161,7 @@ const TodoItems = () => {
                         color="white"
                         opacity={0.6}
                         size={18}
+                        style={{ cursor: "pointer" }}
                         onClick={() =>
                           editIndex === index
                             ? handleEditSubmit()
