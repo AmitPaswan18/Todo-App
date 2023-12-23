@@ -1,8 +1,10 @@
 import { useState, useEffect, useRef } from "react";
 import { RiDeleteBin5Fill, RiEditBoxLine } from "react-icons/ri";
+import Checkboxbutton from "./common/Checkboxbutton";
 import ToogleBar from "./common/ToogleBar";
 import {} from "react-icons/ri";
 import Button from "./common/button";
+import RadioButton from "./common/RadioButton";
 import InputButton from "./common/InputButton";
 const TodoItems = () => {
   const [title, setTitle] = useState("");
@@ -10,7 +12,30 @@ const TodoItems = () => {
   const [todo, setTodo] = useState([]);
   const [isinputValid, setInputValid] = useState(true);
   const [editIndex, setEditIndex] = useState(null);
+  const [checkedItems, setCheckedItems] = useState([]);
+  const [filter, setFilter] = useState("all");
   const editRef = useRef(null);
+  const handleFilterChange = (value) => {
+    setFilter(value);
+  };
+
+  const filteredTodo = () => {
+    switch (filter) {
+      case "complete":
+        return todo.filter((item, index) => checkedItems[index] === true);
+      case "incomplete":
+        return todo.filter((item, index) => checkedItems[index] !== true);
+      default:
+        return todo;
+    }
+  };
+
+  const handleCheckboxChange = (index) => {
+    const updatedCheckedItems = [...checkedItems];
+    updatedCheckedItems[index] = !updatedCheckedItems[index];
+    setCheckedItems(updatedCheckedItems);
+  };
+
   function formValidation() {
     if (title.trim() === "") {
       setInputValid(false);
@@ -40,8 +65,8 @@ const TodoItems = () => {
   const editTodo = (index) => {
     setEditIndex(index);
     setTitleEdit(todo[index].title);
+    console.log("Editing todo at index:", index);
   };
-
   const cancelEdit = () => {
     setEditIndex(null);
     setTitle("");
@@ -55,9 +80,9 @@ const TodoItems = () => {
     if (editIndex !== null) {
       const updatedTasks = [...todo];
       updatedTasks[editIndex].title = title;
+      setEditIndex(null);
       setTodo(updatedTasks);
       saveTasks(updatedTasks);
-      setEditIndex(null);
     } else {
       setTodo([...todo, { title }]);
       saveTasks([...todo, { title }]);
@@ -133,10 +158,10 @@ const TodoItems = () => {
                       <>
                         <div className="flex flex-col">
                           <InputButton
-                            className="w-full h-8 rounded-md p-2 m-2 text-black "
+                            className="w-full h-8 rounded-md p-2 m-2 text-black"
                             placeholder="Task..."
-                            onChange={(e) => setTitle(e.target.value)}
-                            value={title}
+                            onChange={(e) => setTitleEdit(e.target.value)}
+                            value={titleEdit}
                             onKeyDown={(e) => {
                               if (e.key === "Enter") {
                                 handleEditSubmit(e);
@@ -148,6 +173,17 @@ const TodoItems = () => {
                     ) : (
                       <div className="flex lg:mx-2 lg:gap-2 gap-0 flex-col">
                         <div className="md:text-sm text-xs">{item.title}</div>
+                        <div>
+                          <Checkboxbutton
+                            checked={checkedItems[index] || false}
+                            onChange={() => handleCheckboxChange(index)}
+                          />
+                          {checkedItems[index] == true ? (
+                            <span className="badge text-bg-success m-2">
+                              Complete
+                            </span>
+                          ) : null}
+                        </div>
                       </div>
                     )}
                     <div className="flex flex-col md:flex-row">
@@ -189,6 +225,7 @@ const TodoItems = () => {
               <div className="flex flex-col w-full">
                 <div>Task</div>
                 <InputButton
+                  type="text"
                   className="w-full h-8 rounded-md p-2 my-2 text-black "
                   placeholder="Task..."
                   onChange={(e) => setTitle(e.target.value)}
@@ -198,6 +235,41 @@ const TodoItems = () => {
               <div className="flex ">
                 <Button color="#1864AB"> Add a Task</Button>
               </div>
+              <div className="flex justify-center mt-4 gap-2 text-lg">
+                <RadioButton
+                  label="All"
+                  value="all"
+                  checked={filter === "all"}
+                  onChange={() => handleFilterChange("all")}
+                />
+
+                <RadioButton
+                  label="Complete"
+                  value="complete"
+                  checked={filter === "complete"}
+                  onChange={() => handleFilterChange("complete")}
+                />
+
+                <label htmlFor="incomplete">
+                  <RadioButton
+                    label="Incomplete"
+                    value="incomplete"
+                    checked={filter === "incomplete"}
+                    onChange={() => handleFilterChange("incomplete")}
+                  />{" "}
+                </label>
+              </div>
+              {filteredTodo().map((item, index) => (
+                <div className=" max-h-screen text-white" key={index}>
+                  <div
+                    ref={editIndex === index ? editRef : null}
+                    className="flex max-h-fit max-w-fit my-2 bg-slates w-full  border-2 border-gray-500 rounded-md justify-between py-1 px-1">
+                    <div className="flex lg:mx-2 lg:gap-2 gap-0 flex-col">
+                      <div className="md:text-sm text-xs">{item.title}</div>
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
           </form>
         </div>
