@@ -6,11 +6,11 @@ import Button from "./common/button";
 import InputButton from "./common/InputButton";
 const TodoItems = () => {
   const [title, setTitle] = useState("");
+  const [titleEdit, setTitleEdit] = useState("");
   const [todo, setTodo] = useState([]);
-  const [isinputValid, setInputValid] = useState(false);
+  const [isinputValid, setInputValid] = useState(true);
   const [editIndex, setEditIndex] = useState(null);
   const editRef = useRef(null);
-
   function formValidation() {
     if (title.trim() === "") {
       setInputValid(false);
@@ -37,10 +37,9 @@ const TodoItems = () => {
     saveTasks([...todo, { title }]);
     setTitle("");
   }
-
   const editTodo = (index) => {
     setEditIndex(index);
-    setTitle(todo[index].title);
+    setTitleEdit(todo[index].title);
   };
 
   const cancelEdit = () => {
