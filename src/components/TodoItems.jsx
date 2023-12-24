@@ -36,8 +36,8 @@ const TodoItems = () => {
     setCheckedItems(updatedCheckedItems);
   };
 
-  function formValidation() {
-    if (title.trim() === "") {
+  function formValidation(input) {
+    if (input.trim() === "") {
       setInputValid(false);
       return false;
     }
@@ -52,15 +52,20 @@ const TodoItems = () => {
     setTodo(updatedtask);
     saveTasks([...updatedtask]);
   };
-
   function handleSubmit(event) {
     event.preventDefault();
-    if (!formValidation()) {
+    const isValidTitle = formValidation(title);
+
+    if (!isValidTitle) {
       return;
     }
-    setTodo([...todo, { title }]);
-    saveTasks([...todo, { title }]);
-    setTitle("");
+    if (editIndex !== null) {
+      handleEditSubmit(event);
+    } else {
+      setTodo([...todo, { title }]);
+      saveTasks([...todo, { title }]);
+      setTitle("");
+    }
   }
   const editTodo = (index) => {
     setEditIndex(index);
@@ -71,26 +76,24 @@ const TodoItems = () => {
     setEditIndex(null);
     setTitle("");
   };
-
   const handleEditSubmit = (event) => {
-    if (!formValidation()) {
+    event.preventDefault();
+
+    const isValidTitle = formValidation(titleEdit);
+    if (!isValidTitle) {
       return;
     }
 
     if (editIndex !== null) {
       const updatedTasks = [...todo];
-      updatedTasks[editIndex].title = title;
+      console.log("Updated todo", updatedTasks);
+      updatedTasks[editIndex].title = titleEdit;
       setEditIndex(null);
       setTodo(updatedTasks);
       saveTasks(updatedTasks);
-    } else {
-      setTodo([...todo, { title }]);
-      saveTasks([...todo, { title }]);
+      setTitleEdit("");
     }
-    event.preventDefault();
-    setTitle("");
   };
-
   function loadTasks() {
     let loadedTasks = localStorage.getItem("todo");
     let tasks = JSON.parse(loadedTasks);
@@ -161,7 +164,6 @@ const TodoItems = () => {
                             className="w-full h-8 rounded-md p-2 m-2 text-black"
                             placeholder="Task..."
                             onChange={(e) => setTitleEdit(e.target.value)}
-                            value={titleEdit}
                             onKeyDown={(e) => {
                               if (e.key === "Enter") {
                                 handleEditSubmit(e);
@@ -261,9 +263,7 @@ const TodoItems = () => {
               </div>
               {filteredTodo().map((item, index) => (
                 <div className=" max-h-screen text-white" key={index}>
-                  <div
-                    ref={editIndex === index ? editRef : null}
-                    className="flex max-h-fit max-w-fit my-2 bg-slates w-full  border-2 border-gray-500 rounded-md justify-between py-1 px-1">
+                  <div className="flex max-h-fit max-w-fit my-2 bg-slates w-full  border-2 border-gray-500 rounded-md justify-between py-1 px-1">
                     <div className="flex lg:mx-2 lg:gap-2 gap-0 flex-col">
                       <div className="md:text-sm text-xs">{item.title}</div>
                     </div>
