@@ -13,7 +13,7 @@ const ToogleBar = () => {
   }
 
   return (
-    <div className="relative border-2 max-h-8 p-1 rounded-md bg-white lg:left-1/10 md:right-10 right-4 top-2 ">
+    <div className="relative border-2 max-h-8 p-1 rounded-md bg-white lg:left-1/10 md:right-5 right-4 top-2 ">
       <button  onClick={handletoggleCick}>
         {" "}
         {isDark ? <RiMoonClearFill color="skyblue" /> : <RiSunFill  color="orange"/>}

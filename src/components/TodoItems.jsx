@@ -1,11 +1,13 @@
 import { useState, useEffect, useRef } from "react";
+
 import { RiDeleteBin5Fill, RiEditBoxLine } from "react-icons/ri";
+
 import Checkboxbutton from "./common/Checkboxbutton";
 import ToogleBar from "./common/ToogleBar";
-import {} from "react-icons/ri";
 import Button from "./common/button";
 import RadioButton from "./common/RadioButton";
-import InputButton from "./common/InputButton";
+import TaskInput from "./common/TaskInput";
+
 const TodoItems = () => {
   const [title, setTitle] = useState("");
   const [titleEdit, setTitleEdit] = useState("");
@@ -14,7 +16,10 @@ const TodoItems = () => {
   const [editIndex, setEditIndex] = useState(null);
   const [checkedItems, setCheckedItems] = useState({});
   const [filter, setFilter] = useState("all");
+
   const editRef = useRef(null);
+  const containerRef = useRef(null);
+
   const handleFilterChange = (value) => {
     setFilter(value);
   };
@@ -55,6 +60,7 @@ const TodoItems = () => {
     setTodo(updatedtask);
     saveTasks([...updatedtask]);
   };
+
   function handleSubmit(event) {
     event.preventDefault();
     const isValidTitle = formValidation(title);
@@ -70,15 +76,18 @@ const TodoItems = () => {
       setTitle("");
     }
   }
+
   const editTodo = (index) => {
     setEditIndex(index);
     setTitleEdit(todo[index].title);
     console.log("Editing todo at index:", index);
   };
+
   const cancelEdit = () => {
     setEditIndex(null);
     setTitle("");
   };
+
   const handleEditSubmit = (event) => {
     event.preventDefault();
 
@@ -96,6 +105,7 @@ const TodoItems = () => {
       setTitleEdit("");
     }
   };
+
   function loadTasks() {
     let loadedTasks = localStorage.getItem("todo");
     let tasks = JSON.parse(loadedTasks);
@@ -109,8 +119,6 @@ const TodoItems = () => {
     localStorage.setItem("todo", JSON.stringify(todo));
   }
 
-  const containerRef = useRef(null);
-
   const handleBlur = (event) => {
     if (editIndex !== null) {
       handleEditSubmit(event);
@@ -119,13 +127,6 @@ const TodoItems = () => {
 
   useEffect(() => {
     loadTasks();
-    const handleKeyDown = (event) => {
-      if (event.key === "Enter") {
-        if (editIndex !== null) {
-          handleEditSubmit(event);
-        }
-      }
-    };
 
     const handleClickOutside = (event) => {
       if (
@@ -139,11 +140,9 @@ const TodoItems = () => {
       }
     };
 
-    document.addEventListener("keydown", handleKeyDown);
     document.addEventListener("mousedown", handleClickOutside);
 
     return () => {
-      document.removeEventListener("keydown", handleKeyDown);
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [containerRef, editIndex]);
@@ -173,7 +172,7 @@ const TodoItems = () => {
                 <div className="font-sans text-4xl font-bold text-white">
                   My Tasks
                 </div>
-                <div className="flex justify-center text-white mt-4 gap-2 text-lg">
+                <div className="flex justify-center text-sm text-white mt-4 gap-2 md:text-lg">
                   <RadioButton
                     label="All"
                     value="all"
@@ -182,6 +181,7 @@ const TodoItems = () => {
                   />
 
                   <RadioButton
+                    className=""
                     label="Complete"
                     value="complete"
                     checked={filter === "complete"}
@@ -202,6 +202,7 @@ const TodoItems = () => {
                     Please enter a valid task name
                   </div>
                 )}
+
                 {filteredTodo().map((item, index) => (
                   <div className=" max-h-screen text-white" key={index}>
                     <div>
@@ -212,18 +213,17 @@ const TodoItems = () => {
                           {editIndex === index ? (
                             <>
                               <div className="flex flex-col">
-                                <InputButton
-                                  className="w-full h-8 rounded-md p-2 m-2 text-black"
-                                  placeholder="Task..."
-                                  onChange={(e) => setTitleEdit(e.target.value)}
-                                  onBlur={handleBlur}
-                                  value={titleEdit}
-                                  onKeyDown={(e) => {
-                                    if (e.key === "Enter") {
-                                      handleEditSubmit(e);
+                                <form onSubmit={handleEditSubmit}>
+                                  <TaskInput
+                                    className="w-full h-8 rounded-md p-2 m-2 text-black"
+                                    placeholder="Task..."
+                                    onChange={(e) =>
+                                      setTitleEdit(e.target.value)
                                     }
-                                  }}
-                                />
+                                    onBlur={handleBlur}
+                                    value={titleEdit}
+                                  />
+                                </form>
                               </div>
                             </>
                           ) : (
@@ -279,69 +279,6 @@ const TodoItems = () => {
                     Please enter a valid task name
                   </div>
                 )}
-                {/* {todo.map((item, index) => (
-                  <div className=" max-h-screen text-white" key={index}>
-                    <div
-                      ref={editIndex === index ? editRef : null}
-                      className="flex max-h-fit max-w-fit my-2 bg-slates w-full  border-2 border-gray-500 rounded-md justify-between py-1 px-1">
-                      {editIndex === index ? (
-                        <>
-                          <div className="flex flex-col">
-                            <InputButton
-                              className="w-full h-8 rounded-md p-2 m-2 text-black"
-                              placeholder="Task..."
-                              onChange={(e) => setTitleEdit(e.target.value)}
-                              onBlur={handleBlur}
-                              value={titleEdit}
-                              onKeyDown={(e) => {
-                                if (e.key === "Enter") {
-                                  handleEditSubmit(e);
-                                }
-                              }}
-                            />
-                          </div>
-                        </>
-                      ) : (
-                        <div className="flex lg:mx-2 lg:gap-2 gap-0 flex-col">
-                          <div className="md:text-sm text-xs">{item.title}</div>
-                          <div>
-                            <Checkboxbutton
-                              checked={checkedItems[index] || false}
-                              onChange={() => handleCheckboxChange(index)}
-                            />
-                            {checkedItems[index] == true ? (
-                              <span className="badge text-bg-success m-2">
-                                Complete
-                              </span>
-                            ) : null}
-                          </div>
-                        </div>
-                      )}
-                      <div className="flex flex-col md:flex-row">
-                        <RiDeleteBin5Fill
-                          className="m-1"
-                          color="red"
-                          opacity={0.6}
-                          size={18}
-                          style={{ cursor: "pointer" }}
-                          onClick={() => deleteTodo(index)}
-                        />
-                        <RiEditBoxLine
-                          className="m-1"
-                          color="white"
-                          opacity={0.6}
-                          size={18}
-                          style={{ cursor: "pointer" }}
-                          onClick={() =>
-                            editIndex === index
-                              ? handleEditSubmit()
-                              : editTodo(index)
-                          }
-                        />
-                      </div>
-                    </div>
-                  </div>
-                ))} */}
               </div>
             )}
             <ToogleBar />
@@ -355,7 +292,7 @@ const TodoItems = () => {
                 {" "}
                 <div className="flex flex-col w-full">
                   <div>Task</div>
-                  <InputButton
+                  <TaskInput
                     type="text"
                     className="w-full h-8 rounded-md p-2 my-2 text-black "
                     placeholder="Task..."

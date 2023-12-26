@@ -1,4 +1,4 @@
-function InputButton(props) {
+function TaskInput(props) {
   const { value, name, className, children, size, ...rest } = props;
 
   const styles = {
@@ -20,4 +20,4 @@ function InputButton(props) {
   );
 }
 
-export default InputButton;
+export default TaskInput;
