@@ -14,6 +14,7 @@ const Checkboxbutton = (props) => {
         name="todocomplete"
         className={className}
         value={value}
+        checked
         style={styles}
         {...rest}
       />

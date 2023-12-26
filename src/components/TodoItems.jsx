@@ -12,7 +12,7 @@ const TodoItems = () => {
   const [todo, setTodo] = useState([]);
   const [isinputValid, setInputValid] = useState(true);
   const [editIndex, setEditIndex] = useState(null);
-  const [checkedItems, setCheckedItems] = useState([]);
+  const [checkedItems, setCheckedItems] = useState({});
   const [filter, setFilter] = useState("all");
   const editRef = useRef(null);
   const handleFilterChange = (value) => {
@@ -30,10 +30,13 @@ const TodoItems = () => {
     }
   };
 
-  const handleCheckboxChange = (index) => {
-    const updatedCheckedItems = [...checkedItems];
-    updatedCheckedItems[index] = !updatedCheckedItems[index];
-    setCheckedItems(updatedCheckedItems);
+  const handleCheckboxChange = (id) => {
+    setCheckedItems((prevCheckedItems) => {
+      return {
+        ...prevCheckedItems,
+        [id]: !prevCheckedItems[id],
+      };
+    });
   };
 
   function formValidation(input) {
@@ -86,7 +89,6 @@ const TodoItems = () => {
 
     if (editIndex !== null) {
       const updatedTasks = [...todo];
-      console.log("Updated todo", updatedTasks);
       updatedTasks[editIndex].title = titleEdit;
       setEditIndex(null);
       setTodo(updatedTasks);
@@ -159,6 +161,7 @@ const TodoItems = () => {
                   <div className="font-sans lg:font-extrabold  lg:text-3xl text-sm font-bold my-2">
                     My Tasks
                   </div>
+
                   <div className=" text-md text-slate-500 opacity-40 py-2 ">
                     {" "}
                     You have No Task
@@ -170,13 +173,113 @@ const TodoItems = () => {
                 <div className="font-sans text-4xl font-bold text-white">
                   My Tasks
                 </div>
+                <div className="flex justify-center text-white mt-4 gap-2 text-lg">
+                  <RadioButton
+                    label="All"
+                    value="all"
+                    checked={filter === "all"}
+                    onChange={() => handleFilterChange("all")}
+                  />
+
+                  <RadioButton
+                    label="Complete"
+                    value="complete"
+                    checked={filter === "complete"}
+                    onChange={() => handleFilterChange("complete")}
+                  />
+
+                  <label htmlFor="incomplete">
+                    <RadioButton
+                      label="Incomplete"
+                      value="incomplete"
+                      checked={filter === "incomplete"}
+                      onChange={() => handleFilterChange("incomplete")}
+                    />{" "}
+                  </label>
+                </div>
+                {isinputValid === false && (
+                  <div className="text-red-600">
+                    Please enter a valid task name
+                  </div>
+                )}
+                {filteredTodo().map((item, index) => (
+                  <div className=" max-h-screen text-white" key={index}>
+                    <div>
+                      <div className="flex lg:mx-2 lg:gap-2 gap-0 flex-col">
+                        <div
+                          ref={editIndex === index ? editRef : null}
+                          className="flex max-h-fit max-w-fit my-2 bg-slates w-full  border-2 border-gray-500 rounded-md justify-between py-1 px-1">
+                          {editIndex === index ? (
+                            <>
+                              <div className="flex flex-col">
+                                <InputButton
+                                  className="w-full h-8 rounded-md p-2 m-2 text-black"
+                                  placeholder="Task..."
+                                  onChange={(e) => setTitleEdit(e.target.value)}
+                                  onBlur={handleBlur}
+                                  value={titleEdit}
+                                  onKeyDown={(e) => {
+                                    if (e.key === "Enter") {
+                                      handleEditSubmit(e);
+                                    }
+                                  }}
+                                />
+                              </div>
+                            </>
+                          ) : (
+                            <div className="flex lg:mx-2 lg:gap-2 gap-0 flex-col">
+                              <div className="md:text-sm text-xs">
+                                {item.title}
+                              </div>
+                              <div>
+                                {filter === "all" ? (
+                                  <Checkboxbutton
+                                    checked={checkedItems[index] || false}
+                                    onChange={() => handleCheckboxChange(index)}
+                                  />
+                                ) : null}
+                                {checkedItems[index] && filter == "all" ? (
+                                  <span className="badge text-bg-success m-2">
+                                    Complete
+                                  </span>
+                                ) : null}
+                              </div>
+                            </div>
+                          )}
+                          <div className="flex flex-col md:flex-row">
+                            <RiDeleteBin5Fill
+                              className="m-1"
+                              color="red"
+                              opacity={0.6}
+                              size={18}
+                              style={{ cursor: "pointer" }}
+                              onClick={() => deleteTodo(index)}
+                            />
+                            <RiEditBoxLine
+                              className="m-1"
+                              color="white"
+                              opacity={0.6}
+                              size={18}
+                              style={{ cursor: "pointer" }}
+                              onClick={() =>
+                                editIndex === index
+                                  ? handleEditSubmit()
+                                  : editTodo(index)
+                              }
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
 
                 {isinputValid === false && (
                   <div className="text-red-600">
                     Please enter a valid task name
                   </div>
                 )}
-                {todo.map((item, index) => (
+                {/* {todo.map((item, index) => (
                   <div className=" max-h-screen text-white" key={index}>
                     <div
                       ref={editIndex === index ? editRef : null}
@@ -189,6 +292,7 @@ const TodoItems = () => {
                               placeholder="Task..."
                               onChange={(e) => setTitleEdit(e.target.value)}
                               onBlur={handleBlur}
+                              value={titleEdit}
                               onKeyDown={(e) => {
                                 if (e.key === "Enter") {
                                   handleEditSubmit(e);
@@ -237,7 +341,7 @@ const TodoItems = () => {
                       </div>
                     </div>
                   </div>
-                ))}
+                ))} */}
               </div>
             )}
             <ToogleBar />
@@ -262,39 +366,6 @@ const TodoItems = () => {
                 <div className="flex ">
                   <Button color="#1864AB"> Add a Task</Button>
                 </div>
-                <div className="flex justify-center mt-4 gap-2 text-lg">
-                  <RadioButton
-                    label="All"
-                    value="all"
-                    checked={filter === "all"}
-                    onChange={() => handleFilterChange("all")}
-                  />
-
-                  <RadioButton
-                    label="Complete"
-                    value="complete"
-                    checked={filter === "complete"}
-                    onChange={() => handleFilterChange("complete")}
-                  />
-
-                  <label htmlFor="incomplete">
-                    <RadioButton
-                      label="Incomplete"
-                      value="incomplete"
-                      checked={filter === "incomplete"}
-                      onChange={() => handleFilterChange("incomplete")}
-                    />{" "}
-                  </label>
-                </div>
-                {filteredTodo().map((item, index) => (
-                  <div className=" max-h-screen text-white" key={index}>
-                    <div className="flex max-h-fit max-w-fit my-2 bg-slates w-full  border-2 border-gray-500 rounded-md justify-between py-1 px-1">
-                      <div className="flex lg:mx-2 lg:gap-2 gap-0 flex-col">
-                        <div className="md:text-sm text-xs">{item.title}</div>
-                      </div>
-                    </div>
-                  </div>
-                ))}
               </div>
             </form>
           </div>
