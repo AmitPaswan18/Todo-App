@@ -133,6 +133,14 @@ const TodoItems = () => {
 
     const handleClickOutside = (event) => {
       if (
+        isinputValid === false &&
+        inputRef.current &&
+        !inputRef.current.contains(event.target)
+      ) {
+        setInputValid(true);
+      }
+
+      if (
         containerRef.current &&
         !containerRef.current.contains(event.target) &&
         inputRef.current &&
