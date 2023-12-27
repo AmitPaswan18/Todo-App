@@ -22,6 +22,14 @@ const TodoItems = () => {
     setFilter(value);
   };
 
+  const inputRef = useRef(null);
+
+  function handleClick() {
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
+  }
+
   const filteredTodo = () => {
     switch (filter) {
       case "complete":
@@ -86,8 +94,8 @@ const TodoItems = () => {
   };
 
   const handleEditSubmit = (event) => {
-    const isValidTitle = formValidation(titleEdit);
     event.preventDefault();
+    const isValidTitle = formValidation(titleEdit);
     if (!isValidTitle) {
       return;
     }
@@ -128,8 +136,8 @@ const TodoItems = () => {
       if (
         containerRef.current &&
         !containerRef.current.contains(event.target) &&
-        !editInputRef.current.contains(event.target) &&
-        editInputRef.current
+        inputRef.current &&
+        !inputRef.current.contains(event.target)
       ) {
         if (editIndex !== null) {
           handleEditSubmit(event);
@@ -213,12 +221,12 @@ const TodoItems = () => {
                           <div
                             ref={editIndex === index ? editInputRef : null}
                             className="flex max-h-fit max-w-fit my-2 bg-slates w-full  border-2  border-gray-500 rounded-md justify-between py-1 px-1">
-                            {editIndex === index ? (
+                            {editIndex === index && editInputRef.current ? (
                               <>
                                 <div className="flex flex-col">
                                   <form onSubmit={handleEditSubmit}>
-                                    <TaskInput
-                                      ref={editInputRef}
+                                    <input
+                                      ref={inputRef}
                                       className="w-full h-8 rounded-md p-2 m-2 text-black"
                                       placeholder="Task..."
                                       onChange={(e) =>
@@ -253,27 +261,33 @@ const TodoItems = () => {
                               </div>
                             )}
                             <div className="flex flex-col md:flex-row">
-                              <RiDeleteBin5Fill
-                                className="m-1"
-                                color="red"
-                                opacity={0.6}
-                                size={18}
-                                style={{ cursor: "pointer" }}
-                                onClick={() => deleteTodo(index)}
-                              />
-                              <RiEditBoxLine
-                                className="m-1"
-                                color="white"
+                              <button>
+                                <RiDeleteBin5Fill
+                                  className="m-1"
+                                  color="red"
+                                  opacity={0.6}
+                                  size={18}
+                                  style={{ cursor: "pointer" }}
+                                  onClick={() => deleteTodo(index)}
+                                />
+                              </button>
+                              <button
                                 ref={editInputRef}
-                                opacity={0.6}
-                                size={18}
-                                style={{ cursor: "pointer" }}
-                                onClick={() =>
-                                  editIndex === index
-                                    ? handleEditSubmit()
-                                    : editTodo(index)
-                                }
-                              />
+                                className="text-sm"
+                                onClick={handleClick}>
+                                <RiEditBoxLine
+                                  className="m-1"
+                                  color="white"
+                                  opacity={0.6}
+                                  size={18}
+                                  style={{ cursor: "pointer" }}
+                                  onClick={() =>
+                                    editIndex === index
+                                      ? handleEditSubmit()
+                                      : editTodo(index)
+                                  }
+                                />
+                              </button>
                             </div>
                           </div>
                         </div>
