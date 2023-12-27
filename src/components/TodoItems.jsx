@@ -49,7 +49,7 @@ const TodoItems = () => {
     });
   };
 
-  function formValidation(input) {
+  const formValidation = (input) => {
     if (input.trim() === "") {
       setInputValid(false);
       return false;
@@ -57,7 +57,7 @@ const TodoItems = () => {
 
     setInputValid(true);
     return true;
-  }
+  };
 
   const deleteTodo = (index) => {
     let updatedtask = [...todo];
@@ -66,7 +66,7 @@ const TodoItems = () => {
     saveTasks([...updatedtask]);
   };
 
-  function handleSubmit(event) {
+  const handleSubmit = (event) => {
     event.preventDefault();
     const isValidTitle = formValidation(title);
 
@@ -80,7 +80,7 @@ const TodoItems = () => {
       saveTasks([...todo, { title }]);
       setTitle("");
     }
-  }
+  };
 
   const editTodo = (index) => {
     setEditIndex(index);
@@ -109,18 +109,18 @@ const TodoItems = () => {
     }
   };
 
-  function loadTasks() {
+  const loadTasks = () => {
     let loadedTasks = localStorage.getItem("todo");
     let tasks = JSON.parse(loadedTasks);
 
     if (tasks) {
       setTodo(tasks);
     }
-  }
+  };
 
-  function saveTasks(todo) {
+  const saveTasks = (todo) => {
     localStorage.setItem("todo", JSON.stringify(todo));
-  }
+  };
 
   const handleBlur = (event) => {
     if (editIndex !== null) {
