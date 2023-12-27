@@ -15,16 +15,18 @@ const TodoItems = () => {
   const [editIndex, setEditIndex] = useState(null);
   const [checkedItems, setCheckedItems] = useState({});
   const [filter, setFilter] = useState("all");
+  const [clickedInputId, setClickedInputId] = useState(null);
+
   const containerRef = useRef(null);
   const editInputRef = useRef(null);
+  const inputRef = useRef(null);
 
   const handleFilterChange = (value) => {
     setFilter(value);
   };
 
-  const inputRef = useRef(null);
-
-  function handleClick() {
+  function handleClick(id) {
+    setClickedInputId(id);
     if (inputRef.current) {
       inputRef.current.focus();
     }
@@ -157,7 +159,8 @@ const TodoItems = () => {
     <>
       <div
         className="w-full h-screen absolute top-18 bg-gray-700"
-        ref={containerRef}>
+        ref={containerRef}
+        onClick={() => handleClick("inputbar")}>
         <div
           id="scrollbar"
           className="flex justify-center  w-10/12  flex-col items-center mx-auto  rounded-md p-2 bg-gray-700">
@@ -221,11 +224,12 @@ const TodoItems = () => {
                           <div
                             ref={editIndex === index ? editInputRef : null}
                             className="flex max-h-fit max-w-fit my-2 bg-slates w-full  border-2  border-gray-500 rounded-md justify-between py-1 px-1">
-                            {editIndex === index && editInputRef.current ? (
+                            {editIndex === index ? (
                               <>
                                 <div className="flex flex-col">
                                   <form onSubmit={handleEditSubmit}>
                                     <input
+                                      id="inputbar"
                                       ref={inputRef}
                                       className="w-full h-8 rounded-md p-2 m-2 text-black"
                                       placeholder="Task..."
